@@ -1,0 +1,61 @@
+{
+  "name": "dsh-swarm",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Swarm Mode for the DeepSeek Harness: a manager session that runs a project as a swarm of role agents (expert, verifier, memory keeper), with an engine-driven verification loop, a universal message bus and a machine-written project picture.",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./preset/manager": "./lib/preset/manager.js",
+    "./preset/expert": "./lib/preset/expert.js",
+    "./preset/verifier": "./lib/preset/verifier.js",
+    "./preset/memory": "./lib/preset/memory.js",
+    "./client": "./lib/client.js",
+    "./store": "./lib/store.js",
+    "./memory": "./lib/memory.js",
+    "./engine": "./lib/engine.js",
+    "./roster": "./lib/roster.js",
+    "./tools": "./lib/tools.js",
+    "./routes": "./lib/routes.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json",
+    "./icon": "./icon.svg"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": [
+        "./cordis.patch.yml",
+        "./presets/swarm.patch.yml"
+      ]
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-ui-conversation"
+      ]
+    }
+  },
+  "files": [
+    "lib",
+    "presets",
+    "locale",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node scripts/smoke.mjs && node scripts/check-client.mjs",
+    "check": "node --check lib/store.js && node --check lib/memory.js && node --check lib/engine.js && node --check lib/tools.js && node --check lib/routes.js && node --check lib/index.js && node --check lib/client.js && node --check scripts/smoke.mjs && node --check scripts/check-client.mjs"
+  },
+  "keywords": [
+    "dsh",
+    "deepseek-harness",
+    "cordis",
+    "swarm",
+    "orchestration",
+    "verification"
+  ],
+  "license": "MIT"
+}

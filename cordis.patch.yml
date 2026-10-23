@@ -1,0 +1,7 @@
+# Swarm Mode bundle: mounts the host row that owns the mission store, the
+# orchestration engine, the universal message bus, the project-memory store and
+# the /swarm panel route. The host row registers NO model-facing tool and NO
+# prompt section: tools belong to the four agent presets (see presets/swarm.patch.yml).
+- insert:
+    - id: swarm-mode
+      name: dsh-swarm
