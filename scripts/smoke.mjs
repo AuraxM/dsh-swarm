@@ -496,15 +496,16 @@ ok(managerBlock.includes("You are a DISPATCHER"), "the manager persona states th
 ok(managerBlock.includes("Dispatch-only contract"), "the manager persona carries the hard dispatch contract");
 ok(managerBlock.includes("Do not verify."), "the manager is forbidden to verify the work itself");
 const managerPrompt = fs.readFileSync(new URL("../lib/preset/manager.js", import.meta.url), "utf8");
-ok(managerPrompt.includes("Dispatch gate"), "the manager prompt section repeats the dispatch gate");
+ok(managerBlock.includes("If a request needs code"), "the dispatch gate lives in the manager persona");
+ok(!managerPrompt.includes("Dispatch gate") && !managerPrompt.includes("Agent count"), "the prompt section does not restate the persona doctrine");
 ok(managerBlock.includes("## Domain routing"), "the manager persona carries the domain routing model");
 ok(managerBlock.includes("Never start a second expert"), "the manager is told to reuse the domain owner");
 ok(managerBlock.includes("exactly ONE independent verifier"), "the manager persona allows one verifier per line");
 ok(managerBlock.includes("Do not add a second verifier"), "the manager persona forbids extra verifiers");
-ok(managerBlock.includes("## Idle and reporting discipline"), "the manager persona carries idle/reporting discipline");
-ok(managerPrompt.includes("swarm_agent"), "the manager prompt advertises the routing tool");
-ok(managerPrompt.includes("Agent count"), "the manager prompt carries the agent-count rule");
-ok(managerPrompt.includes("exactly ONE verifier"), "the manager prompt carries the one-verifier rule");
+ok(managerBlock.includes("## Lease arbitration"), "the manager persona carries lease arbitration");
+ok(managerPrompt.includes("swarm_agent") && managerPrompt.includes("swarm_lease"), "the manager prompt maps the swarm tool surface");
+ok(managerBlock.includes("One user request = one task line"), "the manager persona carries the agent-count rule");
+ok(["swarm_status", "swarm_agent", "swarm_line", "swarm_message", "swarm_memory"].every((tool) => managerPrompt.includes(tool)), "the manager prompt section documents every manager tool");
 
 // The persona row's template variables are a closed set registered by the
 // persona plugin. This harness registers only `provider` and `model`; `cwd`

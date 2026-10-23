@@ -96,6 +96,11 @@ The plugin is a host row plus four preset rows, exactly like pm-mode:
 - `lib/preset/{manager,expert,verifier,memory}.js` are the four subpath plugin
   rows. Each registers its role's tools into the mounting preset's agent scope and
   writes one prompt section.
+- The section carries the **tool contracts only** — one bullet per tool plus the
+  cross-tool mechanics (which tool owns what). Identity, judgment, hard rules and
+  the workflow live in the preset persona, so the two never restate each other;
+  the split is asserted in `scripts/smoke.mjs`. Repeating the doctrine in both
+  places costs the manager context on every turn, which is why it was removed.
 
 The engine is pure JavaScript over an injected runtime, so the state machine is
 testable offline (`scripts/smoke.mjs`).
@@ -161,6 +166,33 @@ waiting -> working -> verifying -> rework -> working -> ... -> done
   manager** of the pass; a no-verifier delivery or a blocker is reported by the
   expert's report tool. A domain owner stays resident and receives the next
   queued same-domain task.
+
+### Stuck seats (manager judgment, no mechanism)
+
+The engine records a `repeated failure signature` event when a verdict repeats
+the previous round's failed criteria; it does nothing about it. Replacing a seat
+is the manager's call, made from the board (`swarm_status mode=detail` carries
+the verdict history, `mode=delta` the escalation event), and the doctrine is
+prompt-borne — manager preset persona plus the `swarm/preset/manager` prompt
+section. No round cap, no automatic trigger, no engine policy.
+
+- **Progress is the failure moving.** A different failed criterion, or the same
+  one with a changed reason, means the seat is advancing; the same criterion
+  with the same failure text means it is circling its own context.
+- **Swap the seat, not the task**: `remove-expert` the seat, then `add-expert`
+  with a new label and **no domain**. A seat *with* a domain is routed to that
+  domain's owner, and `remove-expert` only makes an owner idle — so
+  re-dispatching with `domain=<id>` hands the task back to the same expert with
+  its context intact. That is the trap: a swap that looks like a swap changes
+  nothing.
+- The workspace survives the swap; the conversation does not. The proven dead
+  end goes into the new seat's `focus` as a fact ("do not retry X: it fails
+  because Y"), never as the old plan or the old seat's reasoning.
+- The manager re-applies the same test after each swap; the engine counts
+  neither rounds nor swaps. Slow work, a lease wait and a `blocked` report are
+  not swaps: the first is not progress, the second is arbitration, the third is
+  a decision. A swap that leaves the failure where it was usually indicts the
+  acceptance criteria, not the expert.
 
 ### Shared resources
 
@@ -232,6 +264,10 @@ Project memory is keyed by project, not by session (`$DSH_HOME/swarm/memory/`).
   persona and the tool descriptions state the order, and the model is trusted to
   follow it. A session with no identifiable project has no memory home, so the
   keeper step does not apply there.
+- **No approach preferences.** A chosen approach, an architecture preference or a
+  plan is not memory: it is relayed into later task books and would pin the next
+  expert to the previous expert's idea. Record what failed and why (a fact), not
+  what was chosen (a preference).
 - Memory entries carry `evidence`, `verifiedAt`, `verifiedBy`, tags and hit counts.
   A human can delete a wrong entry from the panel; the keeper can update one.
 
