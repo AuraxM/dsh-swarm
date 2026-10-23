@@ -142,6 +142,13 @@ waiting -> working -> verifying -> rework -> working -> ... -> done
                     \-> blocked (recorded; the manager sees it in swarm_status)
 ```
 
+- **Names follow the work, not the clock.** A line id is a readable slug —
+  `L-<domain>` when the line is routed (`L-bot-ai`), else `L-<title words>`
+  (`L-fix-the-movement-bug`), else `L-line`; a repeat gets `-2`, `-3`. Child
+  sessions are labelled `<domain or focus> · <line title>` (the verifier:
+  `verifier · <title>`), and every task book opens with the title, so the panel,
+  the subagent list and the manager's own status output name what is being
+  worked on instead of echoing an id.
 - A line is one user request. `swarm_line create` stores the request verbatim,
   the acceptance criteria, the boundaries, the expert seats
   (`experts=[{label,domain,focus}]`), the routing domain and the relayed memory

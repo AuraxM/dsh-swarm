@@ -101,6 +101,11 @@ const saved = store.saveSettings({ maxConcurrent: 2, roles: { expert: { provider
 eq(saved.maxConcurrent, 2, "settings persist");
 eq(store.settings().roles.expert.model, "expert-1", "role route persists");
 const line = store.createLine(board, { title: "Fix the movement bug", request: "The player walks through walls", acceptance: "No wall penetration in the fixture map", kind: "bugfix", memoryIds: [] });
+eq(/^L-[a-z0-9]+(-[a-z0-9]+)*$/.test(line.id), true, "a line id is a readable slug");
+const scratch = store.open("session-scratch");
+const same1 = store.createLine(scratch, { title: "Same title twice" });
+const same2 = store.createLine(scratch, { title: "Same title twice" });
+eq(same2.id, same1.id + "-2", "a repeated title gets a numeric suffix");
 eq(line.status, "waiting", "a new line waits for dispatch");
 store.setLineStatus(board, line, "working", "dispatched");
 eq(line.startedAt > 0, true, "working stamps startedAt");
@@ -181,6 +186,9 @@ eq(calls.startChild.length, 1, "one expert was started");
 eq(calls.startChild[0].preset, "swarm-expert", "the expert preset is requested");
 ok(calls.startChild[0].prompt.includes("Player clips through walls"), "the task book carries the user's words verbatim");
 ok(calls.startChild[0].prompt.includes("swarm_report"), "the task book states the reporting contract");
+ok(/^L-[a-z0-9-]+$/.test(newLine.id), "line ids are readable slugs, not random strings");
+ok(calls.startChild[0].label.includes("Movement fix"), "the expert session label names the work");
+ok(!calls.startChild[0].label.includes(newLine.id), "the expert label does not carry the raw line id");
 const expertId = newLine.experts[0].sessionId;
 const expertExec = { agent: agents.get(expertId) };
 const expertAttached = await engine.attach(expertExec, "expert");
@@ -191,6 +199,7 @@ if (newLine.status !== "verifying") process.stdout.write("verify start failed: "
 eq(newLine.status, "verifying", "a report starts verification");
 eq(calls.startChild.length, 2, "a verifier was started");
 eq(calls.startChild[1].preset, "swarm-verifier", "the verifier preset is requested");
+ok(calls.startChild[1].label.includes("Movement fix"), "the verifier session label names the work");
 const verifierId = newLine.verifierId;
 
 await engine.handleVerdict(attached.board, newLine, verifierId, {
