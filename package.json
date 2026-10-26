@@ -47,7 +47,7 @@
   ],
   "scripts": {
     "test": "node scripts/smoke.mjs && node scripts/check-client.mjs",
-    "check": "node --check lib/store.js && node --check lib/memory.js && node --check lib/engine.js && node --check lib/tools.js && node --check lib/routes.js && node --check lib/index.js && node --check lib/client.js && node --check scripts/smoke.mjs && node --check scripts/check-client.mjs"
+    "check": "node --check lib/naming.js && node --check lib/store.js && node --check lib/memory.js && node --check lib/engine.js && node --check lib/tools.js && node --check lib/routes.js && node --check lib/index.js && node --check lib/client.js && node --check scripts/smoke.mjs && node --check scripts/check-client.mjs"
   },
   "keywords": [
     "dsh",

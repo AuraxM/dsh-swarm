@@ -142,13 +142,17 @@ waiting -> working -> verifying -> rework -> working -> ... -> done
                     \-> blocked (recorded; the manager sees it in swarm_status)
 ```
 
-- **Names follow the work, not the clock.** A line id is a readable slug —
-  `L-<domain>` when the line is routed (`L-bot-ai`), else `L-<title words>`
-  (`L-fix-the-movement-bug`), else `L-line`; a repeat gets `-2`, `-3`. Child
-  sessions are labelled `<domain or focus> · <line title>` (the verifier:
-  `verifier · <title>`), and every task book opens with the title, so the panel,
-  the subagent list and the manager's own status output name what is being
-  worked on instead of echoing an id.
+- **Names follow the work, not the clock.** A line id is a readable Unicode-aware
+  slug — `L-<domain>` when the line is routed (`L-bot-ai`), else `L-<title words>`
+  (`L-fix-the-movement-bug`, `L-修复-移动-bug`), else `L-line`; a repeat gets
+  `-2`, `-3`. Child sessions are labelled `<domain or focus> · <line title>` (the
+  verifier: `verifier · <title>`), and every task book opens with the title.
+  Board titles use the project name (or the first task title), and panel cards
+  lead with the task/memory summary rather than a session or message id. Memory
+  entries and write requests also use title-derived ids with numeric collision
+  suffixes. Project keys keep their internal path hash for stable, collision-safe
+  storage, but the panel, prompts and human-readable status use the project name
+  or root instead of presenting that key as a title.
 - A line is one user request. `swarm_line create` stores the request verbatim,
   the acceptance criteria, the boundaries, the expert seats
   (`experts=[{label,domain,focus}]`), the routing domain and the relayed memory
@@ -412,8 +416,8 @@ Verify:
 ## Development
 
 ```powershell
-node scripts/smoke.mjs          # 221 checks: memory, store, engine (domains/reuse, joint lines, leases), tools, verification loop, preset roster filter, dispatcher guards, memory gate, wiring
-node scripts/check-client.mjs   # 28 checks: bundle format, stylesheet mount, slot registrations, settings section, domain view
+node scripts/smoke.mjs          # 242 checks: memory, store, engine (domains/reuse, joint lines, leases), tools, verification loop, preset roster filter, dispatcher guards, memory gate, wiring
+node scripts/check-client.mjs   # 34 checks: bundle format, stylesheet mount, slot registrations, settings section, domain view, readable display names
 node --check lib/*.js
 ```
 

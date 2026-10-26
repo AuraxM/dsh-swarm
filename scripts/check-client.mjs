@@ -79,6 +79,12 @@ ok(source.includes("experts ' + ((line.experts"), "line cards render the expert 
 ok(source.includes("expert.reused ? ' · reused'"), "line cards mark a reused domain expert");
 ok(source.includes("var domains = props.board.domains"), "the agents view reads the domain registry");
 ok(source.includes("h('span', { className: 'sw-card-title' }, 'Domains')"), "the agents view renders domain ownership");
+ok(source.includes("line.title || line.request || 'Untitled task'"), "line cards lead with the task summary");
+ok(!source.includes("line.id + '  ' + line.title"), "line cards do not use the line id as their title");
+ok(!source.includes("board.projectKey || 'unidentified project'"), "the panel header never displays the project hash");
+ok(!source.includes("request.id + ': ' + request.title"), "pending memory requests lead with their summary, not a random id");
+ok(!source.includes("shortId("), "the panel never falls back to truncated random session ids");
+ok(!source.includes("memory.project.name || memory.project.key"), "the memory view uses the project name, not its hash key");
 
 ok(styleTags.length === 1, "exactly one stylesheet is mounted");
 const css = styleTags[0].textContent;
